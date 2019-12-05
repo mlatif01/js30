@@ -7,7 +7,6 @@
 </head>
 <body>
 
-
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -58,6 +57,32 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key='${e.keyCode}']`); // selects audio element of data-key
+    const key = document.querySelector(`.key[data-key='${e.keyCode}']`)      // selects class key of data-key
+    if (!audio) return; // stop the function from running all together
+    audio.currentTime = 0; // rewind to the start so we can press button many times
+    audio.play();
+    key.classList.add('playing'); // pops the button up and adds colour when key is pressed by adding playing as a class to the div
+  }
+
+  // function to remove transition effect
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return; // skip if it is not a transform
+    this.classList.remove('playing');
+  }
+
+  // rather than setting a timer we use a transitionend event that will fire when the button has stopped animating, so we start
+  // by selecting elements with a class of key
+  const keys = document.querySelectorAll('.key');
+
+  // listen for event transitionend and call removeTransition to get rid off colour and scaling.
+  // each key gets event listener added and when transition ends we remove it
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+
+  // here we listen to the key down event
+  window.addEventListener('keydown', playSound);
 
 </script>
 
